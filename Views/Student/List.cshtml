@@ -1,0 +1,38 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "_Layout";
+}
+@model List<School.Models.Student>
+<h1>
+    List All The Students
+</h1>
+<hr/>
+<table class="table">
+    <thead>
+        <tr>
+            <th>id</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th> Edit</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var stud in Model){
+            <tr>
+                <td>@stud.Id</td>
+                <td>@stud.Name</td>
+                <td>@stud.Email</td>
+                <td><a asp-controller="Student" asp-action="Edit" class="btn btn-primary" asp-route-id="@stud.Id">Edit</a></td>
+                <td>
+                    <a asp-action="Delete" asp-controller="Student" asp-route-id="@stud.Id" class="btn btn-danger"
+                       onclick="return confirm('Are you sure you want to delete this student?');">
+                        Remove
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
