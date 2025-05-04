@@ -1,0 +1,29 @@
+﻿@{
+    ViewData["Title"] = "Encrypt Text";
+}
+
+<div class="container-fluid d-flex align-items-center justify-content-center" style="min-height: 100vh;">
+    <div class="text-center">
+        <h2>Encrypt Text</h2>
+
+        <form method="post">
+            <label>Enter Text:</label>
+            <input type="text" name="plainText" class="form-control" />
+
+            <button type="submit" class="btn btn-primary mt-2">Encrypt</button>
+        </form>
+
+        @if (ViewBag.Error != null)
+        {
+            <p class="text-danger mt-3">@ViewBag.Error</p>
+        }
+
+        @if (ViewBag.CipherText != null)
+        {
+            <div class="mt-3">
+                <p><strong>Original:</strong> @ViewBag.PlainText</p>
+                <p><strong>Encrypted:</strong> @ViewBag.CipherText</p>
+            </div>
+        }
+    </div>
+</div>

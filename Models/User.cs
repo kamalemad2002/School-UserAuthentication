@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel;
 
 namespace School.Models
 {
-    [Table("kemo")]
+    
     public class User
     {
         [Key]
@@ -15,17 +16,20 @@ namespace School.Models
         public string Name { get; set; }
 
         [Display(Name = "Email")]
-
+        [EmailAddress]
         //[DataType(DataType.EmailAddress)]
         public string Email { get; set; }
 
         [Display(Name = "Password")]
 
         [DataType(DataType.Password)]
+        //[PasswordPropertyText]
+        //[MinLength(8, ErrorMessage = "Password must be at least 8 characters long.")]
+        //[MinLength(8, ErrorMessage = "Password must be at least 8 characters long.")]
         public string Password { get; set; }
         [Display(Name = "isAdmin")]
         //public bool isAdmin { get; set; } = true;
-        public bool isAdmin { get; set; }
+        public bool isAdmin { get; set; } 
 
     }
 }

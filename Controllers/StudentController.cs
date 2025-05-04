@@ -6,6 +6,7 @@ using School.Data;
 using School.Models;
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Claims;
+using School.Data;
 
 namespace School.Controllers
 {
@@ -35,18 +36,21 @@ namespace School.Controllers
                 var student = new Student
                 {
                     Name = viewModel.Name,
-                    Email = viewModel.Email,
                     PhoneNumber = viewModel.PhoneNumber,
-                    //Role = viewModel.Role,
+                    Email = viewModel.Email,
                     governorate = viewModel.governorate
+
                 };
                 await dbcontext.students.AddAsync(student);
                 await dbcontext.SaveChangesAsync();
                 return RedirectToAction("List", "Student");
+
             }
             else
             {
-                return View(viewModel);
+                
+                    return View(viewModel);
+                
             }
         }
         [HttpGet]
@@ -87,32 +91,79 @@ namespace School.Controllers
                 return View(st);
             }
         }
-        [HttpPost]
-        public async Task<IActionResult> Delete(int id)
+        //[HttpPost]
+        //public async Task<IActionResult> Delete(int id,User user)
+        //{
+        //    try
+        //    {
+        //        if (HttpContext.Session.GetString("Roule") != "Admin")
+        //        {
+        //            return Unauthorized($"{user.isAdmin} Access denied.");
+        //        }
+
+        //        var student = await dbcontext.students.FindAsync(id);
+        //        if (student == null)
+        //        {
+        //            return NotFound("Student not found.");
+        //        }
+
+        //        dbcontext.students.Remove(student);
+        //        await dbcontext.SaveChangesAsync();
+
+        //        return RedirectToAction("List", "Student");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // Log the exception
+        //        return StatusCode(500, "Internal server error: " + ex.Message);
+        //    }
+        //}
+        //[CustomAuthorizationFilter]
+        [HttpGet]
+        public async Task<IActionResult> Delete(int? id)
         {
-            // Validate if the current user is an admin
-            var currentUser = await dbcontext.users.FirstOrDefaultAsync(u => u.Id == id);
-            if (currentUser == null || !currentUser.isAdmin)
+            var roule = HttpContext.Session.GetString("Roule");
+            if (roule == "Admin")
             {
-                return Content("Access Denied: You do not have permission to delete students.");
+                if (id == null)
+                {
+                    return NotFound();
+                }
+                var matchs = await dbcontext.students.FindAsync(id);
+
+                if (matchs == null)
+                {
+                    return NotFound();
+                }
+                return View(matchs);
             }
 
-            // Find the student to delete
-            var student = await dbcontext.students.FirstOrDefaultAsync(u => u.Id == id);
-            if (student == null)
+            else
+
             {
-                return Content("Error: Student not found.");
+                return Content("Access Denied");
             }
 
-            // Delete the student
-            dbcontext.students.Remove(student);
+        }
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var st = await dbcontext.students.FindAsync(id);
+            if (st != null)
+            {
+                dbcontext.students.Remove(st);
+            }
+
             await dbcontext.SaveChangesAsync();
-
-            // Redirect to the student list
-            return RedirectToAction("List", "Student");
+            return RedirectToAction(nameof(Index));
         }
 
 
 
+    }
+
+    internal class CustomAuthorizationFilterAttribute : Attribute
+    {
     }
 }

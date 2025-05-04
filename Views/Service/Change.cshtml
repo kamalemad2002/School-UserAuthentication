@@ -1,0 +1,33 @@
+﻿@{
+    ViewData["Title"] = "Change Password";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center">Change Password</h2>
+
+    @if (ViewBag.Error != null)
+    {
+        <p class="text-danger text-center">@ViewBag.Error</p>
+    }
+
+    @if (ViewBag.Success != null)
+    {
+        <div class="alert alert-success text-center d-flex align-items-center justify-content-center gap-2 mt-3">
+            <span class="bi bi-check-circle-fill"></span> @ViewBag.Success
+        </div>
+    }
+
+    <form method="post" class="mt-4">
+        <div class="form-group">
+            <label for="currentPassword">Current Password:</label>
+            <input type="password" name="currentPassword" class="form-control" required />
+        </div>
+
+        <div class="form-group mt-3">
+            <label for="newPassword">New Password:</label>
+            <input type="password" name="newPassword" class="form-control" required />
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-4">Change Password</button>
+    </form>
+</div>

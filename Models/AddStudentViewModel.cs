@@ -11,9 +11,13 @@ namespace School.Models
         public string Name { get; set; }
         [Display(Name = "My Email")]
         [Required(ErrorMessage = "this field is required")]
+        [EmailAddress]
+
         public string Email { get; set; }
         [Display(Name = "My phone")]
         [Required(ErrorMessage = "this field is required")]
+        [RegularExpression(@"^\d{10}$", ErrorMessage = "Phone number must be exactly 10 digits.")]
+
         public string PhoneNumber { get; set; }
         [Required(ErrorMessage = "this field is required")]
         public bool Role { get; set; }

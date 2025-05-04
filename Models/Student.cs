@@ -11,7 +11,6 @@ namespace School.Models
        Alex,
        Cairo,
     }
-    [Table("kamal")]
     public class Student
     {
         [Key]
@@ -22,15 +21,23 @@ namespace School.Models
         public string Name{ get; set; }
         [Display(Name = "My Email")]
         [Required(ErrorMessage = "this field is required")]
+        [EmailAddress]
         public string Email{ get; set; }
         [Display(Name = "My phone")]
+        [Phone]
         [Required(ErrorMessage = "this field is required")]
-        public string? PhoneNumber{ get; set; }
+        [RegularExpression(@"^\d{10}$", ErrorMessage = "Phone number must be exactly 10 digits.")]
+
+        public string PhoneNumber{ get; set; }
         //[Required(ErrorMessage = "this field is required")]
         //public bool Role{ get; set; }
         [Required(ErrorMessage = "this field is required")]
         [Display(Name="My Governorate")]
         public Governorate governorate{ get; set; }
-        //public User? user { get; set; }
+        public User? user { get; set; }
+        
+        //public bool? isAdmin => user?.isAdmin;
+
+
     }
 }

@@ -1,0 +1,33 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model Student
+
+<div class="container mt-4">
+    <form asp-action="Delete" method="post" class="p-4 border rounded shadow-sm bg-light">
+        <input asp-for="@Model.Id" type="hidden" />
+        <div class="mb-3">
+            <label class="form-label fw-bold" asp-for="@Model.Name"></label>:
+            <span class="text-secondary">@Model.Name</span>
+        </div>
+        <div class="mb-3">
+            <label class="form-label fw-bold" asp-for="@Model.Email"></label>:
+            <span class="text-secondary">@Model.Email</span>
+        </div>
+        <div class="mb-3">
+            <label class="form-label fw-bold" asp-for="@Model.PhoneNumber"></label>:
+            <span class="text-secondary">@Model.PhoneNumber</span>
+        </div>
+        <div class="mb-3">
+            <label class="form-label fw-bold" asp-for="@Model.governorate"></label>:
+            <span class="text-secondary">@Model.governorate</span>
+        </div>
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-danger">Delete</button>
+            <button type="button" class="btn btn-secondary" onclick="history.back()">Cancel</button>
+        </div>
+    </form>
+</div>
+

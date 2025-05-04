@@ -6,6 +6,7 @@
     Layout = "_Layout";
 }
 @model School.Models.AddStudentViewModel
+
 <h1>Add New Student To The Portal</h1>
 <div class="form-container">
 <form method="post" asp-action="Add" asp-controller="Student">
@@ -18,7 +19,7 @@
 
 <div class="mt-3">
     <label class="form-label">Email</label>
-    <input type="text" class="form-control" asp-for=" Email"/>
+    <input type="text" class="form-control" asp-for="Email"/>
     <span asp-validation-for="Email"></span>
 
 </div>
@@ -30,12 +31,6 @@
 
 </div>
 
-@* <div class="mt-3">  *@
-@*     <input type="checkbox" class="form-check-input" id="Role" asp-for="Role"/> *@
-@*     <label class="form-check-label">Role</label> *@
-@*     <span asp-validation-for="Role"></span> *@
-
-@* </div> *@
 <div>
     <label asp-for="governorate"></label>
     <select asp-for="governorate" class="field" asp-items="@Html.GetEnumSelectList(typeof(Governorate))">

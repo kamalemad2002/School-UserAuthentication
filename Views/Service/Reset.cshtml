@@ -1,0 +1,21 @@
+﻿@{
+    ViewData["Title"] = "Reset Password";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center">Reset Password</h2>
+
+    @if (ViewBag.Error != null)
+    {
+        <p class="text-danger">@ViewBag.Error</p>
+    }
+
+    <form method="post" class="mt-4">
+        <div class="form-group">
+            <label for="password">New Password:</label>
+            <input type="password" name="Password" class="form-control" required />
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Reset Password</button>
+    </form>
+</div>
