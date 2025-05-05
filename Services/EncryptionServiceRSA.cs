@@ -44,7 +44,7 @@ namespace School.Services
             }
             catch (CryptographicException e)
             {
-                return null; // Or handle/log as needed
+                return null; 
             }
         }
 

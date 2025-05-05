@@ -8,7 +8,7 @@ using SecurityProject.Common;
 
 namespace School.Storage
 {
-    public class FileManager
+    public static class FileManager
     {
 
         public static void SaveUser(RegisterModel user)
