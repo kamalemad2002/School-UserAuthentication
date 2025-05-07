@@ -71,14 +71,17 @@ namespace School.Storage
         public static List<(string plainText, string cipherText)> LoadAllEncryptedTexts(string email)
         {
             var results = new List<(string, string)>();
-            foreach (var line in File.ReadAllLines(CommonClass.encryptedFile))
+
+            using (StreamReader reader = new StreamReader(CommonClass.encryptedFile))
             {
-                var parts = line.Split(',');
-                if (parts.Length >= 3 && parts[0] == email)
+                string line;
+                while ((line = reader.ReadLine()) != null)
                 {
+                    var parts = line.Split(',');
                     results.Add((parts[1], parts[2]));
                 }
             }
+
             return results;
         }
 

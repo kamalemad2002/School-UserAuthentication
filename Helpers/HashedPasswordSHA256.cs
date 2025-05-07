@@ -13,9 +13,6 @@ namespace School.Helpers
 
         public static string HashPassword(string password)
         {
-            if (password == null)
-                throw new ArgumentNullException(nameof(password), "Password cannot be null.");
-
             using (SHA256 sha256 = SHA256.Create())
             {
                 byte[] bytes = sha256.ComputeHash(ByteConverter.GetBytes(password));

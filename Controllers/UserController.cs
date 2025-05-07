@@ -72,7 +72,7 @@ namespace School.Controllers
 
             if (users.Any(u => u.Email.Equals(user.Email, StringComparison.OrdinalIgnoreCase)))
             {
-                ViewBag.error = "Email is already exits!! Plz Log In";
+                ViewBag.error = "Email is already exits!!";
                 return View(user);
             }
             var hashed = School.Helpers.HashedPasswordSHA256.HashPassword(user.Password);

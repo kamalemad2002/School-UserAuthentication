@@ -13,7 +13,6 @@ namespace School.Services
         {
         
             FileManager.UpdateUserPassword(email, School.Helpers.HashedPasswordSHA256.HashPassword(newPass));
-            Console.WriteLine("Password reset successfully.");
         }
         public static void Change(string email, string currentPass, string newPass)
         {
