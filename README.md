@@ -29,4 +29,3 @@ A simple ASP.NET Core MVC project for user authentication and password security.
 - ASP.NET Core MVC
 - RSA Encryption & RSA Decryption
 - Visual Studio 2022
-
