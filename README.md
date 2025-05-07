@@ -1,6 +1,6 @@
 # School User Authentication
 
-A simple C# console and ASP.NET Core MVC project for user authentication and password security.
+A simple ASP.NET Core MVC project for user authentication and password security.
 
 ## 🔐 Features
 
@@ -18,7 +18,7 @@ A simple C# console and ASP.NET Core MVC project for user authentication and pas
 
 ## 🚀 How to Run
 
-1. Open the solution in Visual Studio.
+1. Open the solution in Visual Studio 2022.
 2. Build the project.
 3. Run the project.
 4. Use the UI to register, login, change or reset password.
@@ -27,6 +27,6 @@ A simple C# console and ASP.NET Core MVC project for user authentication and pas
 
 - C#
 - ASP.NET Core MVC
-- RSA Encryption
-- Visual Studio
+- RSA Encryption & RSA Decryption
+- Visual Studio 2022
 
