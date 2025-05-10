@@ -105,6 +105,29 @@ namespace School.Controllers
                 return View();
             }
         }
+        [HttpGet]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult ForgotPassword(string Email)
+        {
+            var users = FileManager.LoadUsers();
+            var user = users.FirstOrDefault(u => u.Email == Email);
+
+            if (user == null)
+            {
+                ViewBag.Error = "Email not found.";
+                return View();
+            }
+
+            // Store email in session and redirect to Reset view
+            HttpContext.Session.SetString("Email", Email);
+            return RedirectToAction("Reset");
+        }
+
 
     }
 }

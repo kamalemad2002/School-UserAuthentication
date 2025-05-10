@@ -12,21 +12,6 @@
             <form asp-action="Login" asp-controller="User" method="post" id="LoginForm" class="p-4 border rounded shadow">
                 <h2 class="text-center mb-4">Login</h2>
 
-                <!-- Error Message -->
-                @* @if (!string.IsNullOrEmpty(ViewBag.error)) *@
-                @* { *@
-                @*     <div class="alert alert-danger text-center"> *@
-                @*         @ViewBag.error *@
-                @*     </div> *@
-                @* } *@
-
-                <!-- Hidden Field for Id -->
-                @* <div hidden> *@
-                @*     <label asp-for="@Model."></label> *@
-                @*     <input asp-for="@Model." class="" /> *@
-                @*     <span asp-validation-for="Id"></span> *@
-                @* </div> *@
-
                 <!-- Email Field -->
                 <div class="mb-3">
                     <label asp-for="@Model.Email" class="form-label"></label>
@@ -40,12 +25,15 @@
                     <input asp-for="@Model.Password" type="password" class="form-control" />
                     <span asp-validation-for="Password" class="text-danger"></span>
                 </div>
-
+                <div class="text-end mt-1">
+                    <a href="/Service/ForgotPassword">Forgot Password?</a>
+                </div>
                 <!-- Buttons -->
                 <div class="d-flex justify-content-between">
                     <input type="submit" class="btn btn-primary" value="Login" />
                     <a href="~/User/Signup" class="btn btn-secondary">Signup</a>
                 </div>
+
             </form>
         </div>
     </div>
