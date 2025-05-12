@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SecurityProject.Common;
+using System.Security.Cryptography;
 
 namespace School.Storage
 {
@@ -35,7 +36,7 @@ namespace School.Storage
                 string line;
                 while ((line = reader.ReadLine()) != null)
                 {
-                    var parts = line.Split(',');   
+                    var parts = line.Split(',');  // array of stringssss 
                     users.Add(new RegisterModel { Email = parts[0], Password = parts[1] });
                 }
             }
@@ -60,7 +61,8 @@ namespace School.Storage
         {
             try
             {
-                File.AppendAllText(CommonClass.encryptedFile, $"{email},{plainText},{cipherText}\n");
+                string filePath = Path.Combine(CommonClass.encryptedUsersFolder, $"{email}.txt");
+                File.AppendAllText(filePath, $"{plainText},{cipherText}\n");
             }
             catch (IOException ex)
             {
@@ -71,18 +73,47 @@ namespace School.Storage
         public static List<(string plainText, string cipherText)> LoadAllEncryptedTexts(string email)
         {
             var results = new List<(string, string)>();
+            string filePath = Path.Combine(CommonClass.encryptedUsersFolder, $"{email}.txt");
 
-            using (StreamReader reader = new StreamReader(CommonClass.encryptedFile))
+            if (!File.Exists(filePath))
+                return results;
+
+            using (StreamReader reader = new StreamReader(filePath))
             {
                 string line;
                 while ((line = reader.ReadLine()) != null)
                 {
                     var parts = line.Split(',');
-                    results.Add((parts[1], parts[2]));
+                    results.Add((parts[0], parts[1]));
                 }
             }
 
             return results;
+        }
+        public static void SaveUserKey(string email, RSAParameters publicKey, RSAParameters privateKey)
+        {
+            string filePath = Path.Combine(CommonClass.rsaKeysFolder, $"{email}_key.xml");
+
+            using (var rsa = new RSACryptoServiceProvider())
+            {
+                rsa.ImportParameters(privateKey);
+                string keyXml = rsa.ToXmlString(true); // include private key
+                File.WriteAllText(filePath, keyXml);
+            }
+        }
+
+        public static (RSAParameters publicKey, RSAParameters privateKey)? LoadUserKey(string email)
+        {
+            string filePath = Path.Combine(CommonClass.rsaKeysFolder, $"{email}_key.xml");
+
+            if (!File.Exists(filePath)) return null;
+
+            using (var rsa = new RSACryptoServiceProvider())
+            {
+                string keyXml = File.ReadAllText(filePath);
+                rsa.FromXmlString(keyXml);
+                return (rsa.ExportParameters(false), rsa.ExportParameters(true));
+            }
         }
 
 
@@ -91,8 +122,11 @@ namespace School.Storage
             if (!File.Exists(CommonClass.registerFile))
                 using (FileStream fs = File.Create(CommonClass.registerFile)) { }
 
-            if (!File.Exists(CommonClass.encryptedFile))
-                using (FileStream fs = File.Create(CommonClass.encryptedFile)) { }
+            if (!Directory.Exists(CommonClass.encryptedUsersFolder))
+                Directory.CreateDirectory(CommonClass.encryptedUsersFolder);
+            if (!Directory.Exists(CommonClass.rsaKeysFolder))
+                Directory.CreateDirectory(CommonClass.rsaKeysFolder);
+
         }
 
     }

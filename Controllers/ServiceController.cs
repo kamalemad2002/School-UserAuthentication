@@ -76,7 +76,7 @@ namespace School.Controllers
 
             // Call your service to reset the password
             School.Services.PassServices.Reset(email,Password);
-            return RedirectToAction("Login", "User"); // After resetting, redirect to Login
+            return RedirectToAction("Login", "User"); 
         }
 
         [HttpGet]
@@ -101,7 +101,7 @@ namespace School.Controllers
             }
             catch (Exception ex)
             {
-                ViewBag.Error = ex.Message; // "Incorrect current password."
+                ViewBag.Error = ex.Message; 
                 return View();
             }
         }
@@ -122,8 +122,6 @@ namespace School.Controllers
                 ViewBag.Error = "Email not found.";
                 return View();
             }
-
-            // Store email in session and redirect to Reset view
             HttpContext.Session.SetString("Email", Email);
             return RedirectToAction("Reset");
         }

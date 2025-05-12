@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Storage\Files\" />
+    <Folder Include="Storage\Files\EncryptedUsers\" />
   </ItemGroup>
 
 </Project>

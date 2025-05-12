@@ -29,6 +29,20 @@ namespace School.Services
                 if (string.IsNullOrEmpty(inputText))
                     return null;
 
+                var keyPair = FileManager.LoadUserKey(email);
+                if (keyPair == null)
+                {
+
+                    EncryptionServiceRSA.GenerateAndSaveKeys(email);
+                    keyPair = FileManager.LoadUserKey(email);
+                    if(keyPair== null)
+                    {
+                        Console.WriteLine("Failed to generate keys.");
+                        return null;
+                    }
+                }
+
+                var pubkey = keyPair.Value.publicKey;
                 byte[] dataToEncrypt = CommonClass.ByteConverter.GetBytes(inputText);
 
                 using (RSACryptoServiceProvider rsa = new RSACryptoServiceProvider())
@@ -36,15 +50,13 @@ namespace School.Services
                     rsa.ImportParameters(pubkey);
                     byte[] encryptedData = rsa.Encrypt(dataToEncrypt, doPadding);
                     string cipherBase64 = Convert.ToBase64String(encryptedData);
-
                     FileManager.SaveEncryptedText(email, inputText, cipherBase64);
-
                     return cipherBase64;
                 }
             }
-            catch (CryptographicException e)
+            catch (CryptographicException)
             {
-                return null; 
+                return null;
             }
         }
 
@@ -54,6 +66,15 @@ namespace School.Services
             var plainTexts = new List<string>();
             var entries = FileManager.LoadAllEncryptedTexts(email);
 
+            var keyPair = FileManager.LoadUserKey(email);
+            if (keyPair == null)
+            {
+                Console.WriteLine("No key found for user.");
+                return plainTexts;
+            }
+
+            var privkey = keyPair.Value.privateKey;
+
             foreach (var (_, cipherBase64) in entries)
             {
                 try
@@ -62,7 +83,7 @@ namespace School.Services
 
                     using (RSACryptoServiceProvider rsa = new RSACryptoServiceProvider())
                     {
-                        rsa.ImportParameters(privkey); 
+                        rsa.ImportParameters(privkey);
                         byte[] decryptedBytes = rsa.Decrypt(cipherBytes, doPadding);
                         string plainText = CommonClass.ByteConverter.GetString(decryptedBytes);
                         Console.WriteLine($"Decrypted Text: {plainText}");
@@ -71,13 +92,23 @@ namespace School.Services
                 }
                 catch (Exception)
                 {
-                    
+                    // Handle or log decryption failure
                 }
             }
 
             return plainTexts;
         }
 
+
+        public static void GenerateAndSaveKeys(string email)
+        {
+            using (var rsa = new RSACryptoServiceProvider(2048))
+            {
+                RSAParameters pubkey = rsa.ExportParameters(false);
+                RSAParameters privkey = rsa.ExportParameters(true);
+                FileManager.SaveUserKey(email, pubkey, privkey);
+            }
+        }
 
     }
 }
