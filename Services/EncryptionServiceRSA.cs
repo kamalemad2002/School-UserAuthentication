@@ -26,23 +26,6 @@ namespace School.Services
         {
             try
             {
-                if (string.IsNullOrEmpty(inputText))
-                    return null;
-
-                var keyPair = FileManager.LoadUserKey(email);
-                if (keyPair == null)
-                {
-
-                    EncryptionServiceRSA.GenerateAndSaveKeys(email);
-                    keyPair = FileManager.LoadUserKey(email);
-                    if(keyPair== null)
-                    {
-                        Console.WriteLine("Failed to generate keys.");
-                        return null;
-                    }
-                }
-
-                var pubkey = keyPair.Value.publicKey;
                 byte[] dataToEncrypt = CommonClass.ByteConverter.GetBytes(inputText);
 
                 using (RSACryptoServiceProvider rsa = new RSACryptoServiceProvider())
@@ -65,16 +48,6 @@ namespace School.Services
         {
             var plainTexts = new List<string>();
             var entries = FileManager.LoadAllEncryptedTexts(email);
-
-            var keyPair = FileManager.LoadUserKey(email);
-            if (keyPair == null)
-            {
-                Console.WriteLine("No key found for user.");
-                return plainTexts;
-            }
-
-            var privkey = keyPair.Value.privateKey;
-
             foreach (var (_, cipherBase64) in entries)
             {
                 try
@@ -92,7 +65,6 @@ namespace School.Services
                 }
                 catch (Exception)
                 {
-                    // Handle or log decryption failure
                 }
             }
 
@@ -100,15 +72,6 @@ namespace School.Services
         }
 
 
-        public static void GenerateAndSaveKeys(string email)
-        {
-            using (var rsa = new RSACryptoServiceProvider(2048))
-            {
-                RSAParameters pubkey = rsa.ExportParameters(false);
-                RSAParameters privkey = rsa.ExportParameters(true);
-                FileManager.SaveUserKey(email, pubkey, privkey);
-            }
-        }
-
+        
     }
 }

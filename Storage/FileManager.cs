@@ -12,13 +12,16 @@ namespace School.Storage
     public static class FileManager
     {
 
-        public static void SaveUser(RegisterModel user)
+        public static void SaveUser(RegisterModel user, RSAParameters publicKey, RSAParameters privateKey)
         {
             try
             {
+                string publicKeyXml = RSAParametersToXml(publicKey,false);
+                string privateKeyXml = RSAParametersToXml(privateKey,true);
+
                 using (StreamWriter writer = new StreamWriter(SecurityProject.Common.CommonClass.registerFile, append: true))
                 {
-                    writer.WriteLine($"{user.Email},{user.Password}");
+                    writer.WriteLine($"{user.Email},{user.Password},{publicKeyXml},{privateKeyXml}");
                 }
             }
             catch (IOException ex)
@@ -36,8 +39,25 @@ namespace School.Storage
                 string line;
                 while ((line = reader.ReadLine()) != null)
                 {
-                    var parts = line.Split(',');  // array of stringssss 
-                    users.Add(new RegisterModel { Email = parts[0], Password = parts[1] });
+                    var parts = line.Split(',');
+                    if (parts.Length == 4)
+                    {
+                        string email = parts[0];
+                        string password = parts[1];
+                        string publicKeyXml = parts[2];
+                        string privateKeyXml = parts[3];
+
+                        RSAParameters publicKey = XmlToRSAParameters(publicKeyXml,false);
+                        RSAParameters privateKey = XmlToRSAParameters(privateKeyXml,true);
+
+                        users.Add(new RegisterModel
+                        {
+                            Email = email,
+                            Password = password,
+                            PublicKey = publicKey, 
+                            PrivateKey = privateKey  
+                        });
+                    }
                 }
             }
 
@@ -46,8 +66,9 @@ namespace School.Storage
 
         public static void UpdateUserPassword(string email, string newHashedPassword)
         {
+            
             var users = LoadUsers();
-            foreach (var user in users)
+            foreach (var user in users) 
             {
                 if (user.Email == email)
                 {
@@ -90,33 +111,24 @@ namespace School.Storage
 
             return results;
         }
-        public static void SaveUserKey(string email, RSAParameters publicKey, RSAParameters privateKey)
+        
+        public static RSAParameters XmlToRSAParameters(string xml, bool includePrivateParameters)
         {
-            string filePath = Path.Combine(CommonClass.rsaKeysFolder, $"{email}_key.xml");
-
             using (var rsa = new RSACryptoServiceProvider())
             {
-                rsa.ImportParameters(privateKey);
-                string keyXml = rsa.ToXmlString(true); // include private key
-                File.WriteAllText(filePath, keyXml);
+                rsa.FromXmlString(xml);
+                return rsa.ExportParameters(includePrivateParameters);
             }
         }
 
-        public static (RSAParameters publicKey, RSAParameters privateKey)? LoadUserKey(string email)
+        public static string RSAParametersToXml(RSAParameters rsaParameters, bool includePrivate)
         {
-            string filePath = Path.Combine(CommonClass.rsaKeysFolder, $"{email}_key.xml");
-
-            if (!File.Exists(filePath)) return null;
-
             using (var rsa = new RSACryptoServiceProvider())
             {
-                string keyXml = File.ReadAllText(filePath);
-                rsa.FromXmlString(keyXml);
-                return (rsa.ExportParameters(false), rsa.ExportParameters(true));
+                rsa.ImportParameters(rsaParameters);
+                return rsa.ToXmlString(includePrivate);
             }
         }
-
-
         public static void InitializeFiles()
         {
             if (!File.Exists(CommonClass.registerFile))
@@ -124,9 +136,6 @@ namespace School.Storage
 
             if (!Directory.Exists(CommonClass.encryptedUsersFolder))
                 Directory.CreateDirectory(CommonClass.encryptedUsersFolder);
-            if (!Directory.Exists(CommonClass.rsaKeysFolder))
-                Directory.CreateDirectory(CommonClass.rsaKeysFolder);
-
         }
 
     }

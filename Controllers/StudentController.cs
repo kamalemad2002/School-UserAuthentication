@@ -91,34 +91,6 @@ namespace School.Controllers
                 return View(st);
             }
         }
-        //[HttpPost]
-        //public async Task<IActionResult> Delete(int id,User user)
-        //{
-        //    try
-        //    {
-        //        if (HttpContext.Session.GetString("Roule") != "Admin")
-        //        {
-        //            return Unauthorized($"{user.isAdmin} Access denied.");
-        //        }
-
-        //        var student = await dbcontext.students.FindAsync(id);
-        //        if (student == null)
-        //        {
-        //            return NotFound("Student not found.");
-        //        }
-
-        //        dbcontext.students.Remove(student);
-        //        await dbcontext.SaveChangesAsync();
-
-        //        return RedirectToAction("List", "Student");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        // Log the exception
-        //        return StatusCode(500, "Internal server error: " + ex.Message);
-        //    }
-        //}
-        //[CustomAuthorizationFilter]
         [HttpGet]
         public async Task<IActionResult> Delete(int? id)
         {

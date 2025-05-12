@@ -4,7 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using School.Models;
+using School.Services;
 using School.Storage;
+using System.Security.Cryptography;
 
 namespace School.Controllers
 {
@@ -55,7 +57,6 @@ namespace School.Controllers
             return View();
         }
 
-        //POST REGISTER
         [HttpPost]
         public IActionResult Signup(RegisterModel user)
         {
@@ -64,24 +65,27 @@ namespace School.Controllers
             {
                 return View(user);
             }
-            if (user.Password.Length < 8)
-            {
-                ViewBag.error = "Password must be at least 8 characters long!!";
-                return View(user);
-            }
+                if (user.Password.Length < 8)
+                {
+                    ViewBag.error = "Password musAt be at least 8 characters long!!";
+                    return View(user);
+                }
 
             if (users.Any(u => u.Email.Equals(user.Email, StringComparison.OrdinalIgnoreCase)))
             {
                 ViewBag.error = "Email is already exits!!";
                 return View(user);
             }
+
             var hashed = School.Helpers.HashedPasswordSHA256.HashPassword(user.Password);
-            FileManager.SaveUser(new RegisterModel { Email = user.Email, Password = hashed });
+            using (RSACryptoServiceProvider rsa = new RSACryptoServiceProvider())
+            {
+                var pubKey = rsa.ExportParameters(false);
+                var privKey = rsa.ExportParameters(true);
+                FileManager.SaveUser(new RegisterModel { Email = user.Email, Password = hashed }, pubKey, privKey);
+            }
             return View("Login");
         }
-
-
-
         public ActionResult Logout()
         {
             HttpContext.Session.Clear();
