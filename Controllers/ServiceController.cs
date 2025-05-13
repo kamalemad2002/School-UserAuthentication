@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using School.Helpers;
+using School.Models;
 using School.Services;
 using School.Storage;
 
@@ -67,14 +68,18 @@ namespace School.Controllers
         [HttpPost]
         public IActionResult Reset(string Password)
         {
+            if (Password.Length <= 8)
+            {
+                ViewBag.error = "Password musAt be at least 8 characters long!!";
+                return View();
+            }
+
             var email = HttpContext.Session.GetString("Email");
             if (string.IsNullOrEmpty(email))
             {
                 ViewBag.Error = "Please enter a valid email.";
                 return View();
             }
-
-            // Call your service to reset the password
             School.Services.PassServices.Reset(email,Password);
             return RedirectToAction("Login", "User"); 
         }
@@ -87,6 +92,12 @@ namespace School.Controllers
         [HttpPost]
         public IActionResult Change(string currentPassword, string newPassword)
         {
+            if (newPassword.Length < 8)
+            {
+                ViewBag.error = "Password musAt be at least 8 characters long!!";
+                return View();
+            }
+
             var email = HttpContext.Session.GetString("Email");
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(currentPassword) || string.IsNullOrEmpty(newPassword))
             {
