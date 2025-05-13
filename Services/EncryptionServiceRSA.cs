@@ -67,7 +67,6 @@ namespace School.Services
                 Console.WriteLine("User not found.");
                 return plainTexts;  
             }
-
             foreach (var (_, cipherBase64) in entries)
             {
                 try

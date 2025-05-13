@@ -40,8 +40,6 @@ namespace School.Storage
                 while ((line = reader.ReadLine()) != null)
                 {
                     var parts = line.Split(',');
-                    if (parts.Length == 4)
-                    {
                         string email = parts[0];
                         string password = parts[1];
                         string publicKeyXml = parts[2];
@@ -58,7 +56,7 @@ namespace School.Storage
                             PrivateKey = privateKey  
                         });
                     }
-                }
+                
             }
 
             return users;
@@ -66,7 +64,6 @@ namespace School.Storage
 
         public static void UpdateUserPassword(string email, string newHashedPassword)
         {
-            
             var users = LoadUsers();
             foreach (var user in users) 
             {
@@ -76,7 +73,10 @@ namespace School.Storage
                     break;
                 }
             }
-            File.WriteAllLines(CommonClass.registerFile, users.ConvertAll(u => $"{u.Email},{u.Password}"));
+            File.WriteAllLines(CommonClass.registerFile,
+    users.ConvertAll(u =>
+        $"{u.Email},{u.Password},{RSAParametersToXml(u.PublicKey, false)},{RSAParametersToXml(u.PrivateKey, true)}"));
+
         }
         public static void SaveEncryptedText(string email, string plainText, string cipherText)
         {
@@ -90,7 +90,6 @@ namespace School.Storage
                 Console.WriteLine($"File write error: {ex.Message}");
             }
         }
-
         public static List<(string plainText, string cipherText)> LoadAllEncryptedTexts(string email)
         {
             var results = new List<(string, string)>();
@@ -108,19 +107,16 @@ namespace School.Storage
                     results.Add((parts[0], parts[1]));
                 }
             }
-
             return results;
         }
-        
         public static RSAParameters XmlToRSAParameters(string xml, bool includePrivateParameters)
         {
-            using (var rsa = new RSACryptoServiceProvider())
+            using (RSACryptoServiceProvider rsa = new RSACryptoServiceProvider())
             {
                 rsa.FromXmlString(xml);
                 return rsa.ExportParameters(includePrivateParameters);
             }
         }
-
         public static string RSAParametersToXml(RSAParameters rsaParameters, bool includePrivate)
         {
             using (var rsa = new RSACryptoServiceProvider())
@@ -137,6 +133,5 @@ namespace School.Storage
             if (!Directory.Exists(CommonClass.encryptedUsersFolder))
                 Directory.CreateDirectory(CommonClass.encryptedUsersFolder);
         }
-
     }
 }
